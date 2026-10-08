@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Rules · {{ app_name }}{% endblock %}
+{% block nav %}
+  <a href="{{ url_for('index') }}">chats</a>
+  <a href="{{ url_for('rules') }}" class="active">rules</a>
+{% endblock %}
+{% block navright %}<span class="tag">{{ rule_count }} rules</span>{% endblock %}
+{% block content %}
+
+{% if error %}<div class="flash error">{{ error }}</div>{% endif %}
+
+<div class="card">
+  <h2>New rule</h2>
+  <form method="post" action="{{ url_for('create_rule') }}">
+    <div class="row" style="margin-bottom:10px">
+      <div><label for="trigger">trigger</label><br><input id="trigger" name="trigger" placeholder="hi or !weather* or re:^!price" value="{{ form.trigger or '' }}" size="28"></div>
+      <div><label for="action">action</label><br>
+        <select id="action" name="action">
+          {% for a in actions %}<option value="{{ a }}" {% if form.action == a %}selected{% endif %}>{{ a }}</option>{% endfor %}
+        </select>
+      </div>
+      <div><label for="text">reply text</label><br><input id="text" name="text" placeholder="hello!" value="{{ form.text or '' }}" size="28"></div>
+    </div>
+    <button class="btn" type="submit">Create rule</button>
+  </form>
+  <p class="mono" style="color:var(--muted);margin-top:10px">Exact match, <span class="tag">!weather*</span> prefix, or <span class="tag">re:&hellip;</span> regex — matched in id order by bot.handlers.match.</p>
+</div>
+
+<div class="card">
+  <h2>All rules <span class="tag">{{ enabled_count }} enabled / {{ rule_count }}</span></h2>
+  {% if rules %}
+  <table>
+    <tr><th>id</th><th>trigger</th><th>action</th><th>params</th><th>enabled</th><th></th></tr>
+    {% for r in rules %}
+    <tr>
+      <td class="mono">{{ r.id }}</td>
+      <td class="mono">{{ r.trigger }}</td>
+      <td>{{ r.action }}</td>
+      <td class="mono">{{ r.params_json }}</td>
+      <td>{% if r.enabled %}<span class="tag g">on</span>{% else %}<span class="tag y">off</span>{% endif %}</td>
+      <td class="row">
+        <form method="post" action="{{ url_for('toggle_rule', rid=r.id) }}"><button class="btn g" type="submit">toggle</button></form>
+        <form method="post" action="{{ url_for('delete_rule', rid=r.id) }}"><button class="btn r" type="submit">delete</button></form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <div class="empty mono">no rules yet — POST /api/rules {"trigger":"hi","action":"reply","params":{"text":"hello"}}</div>
+  {% endif %}
+</div>
+{% endblock %}

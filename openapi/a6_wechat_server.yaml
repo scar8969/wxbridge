@@ -1,0 +1,35 @@
+openapi: 3.0.0
+info:
+  title: "💬 wechat-server"
+  version: 0.1.0
+paths:
+  /api/webhook:
+    post:
+      summary: send message
+      responses:
+        "200":
+          description: ok
+  /api/messages:
+    get:
+      summary: list
+      responses:
+        "200":
+          description: ok
+  /api/rules:
+    post:
+      summary: add rule
+      responses:
+        "200":
+          description: ok
+  /api/rules:
+    get:
+      summary: list rules
+      responses:
+        "200":
+          description: ok
+  /api/groups/<id>/mute:
+    post:
+      summary: mute
+      responses:
+        "200":
+          description: ok

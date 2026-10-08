@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Chats · {{ app_name }}{% endblock %}
+{% block nav %}
+  <a href="{{ url_for('index') }}" class="active">chats</a>
+  <a href="{{ url_for('rules') }}">rules</a>
+{% endblock %}
+{% block navright %}<span class="tag g">{{ contact_count }} contacts</span><span class="tag">{{ group_count }} groups</span>{% endblock %}
+{% block content %}
+
+<div class="card">
+  <h2>Simulate an inbound message</h2>
+  <form method="post" action="{{ url_for('simulate') }}" class="row">
+    <input name="text" placeholder="hi" value="{{ form.text or '' }}" style="flex:1">
+    <button class="btn" type="submit">Dispatch</button>
+  </form>
+  {% if sim %}
+    <table style="margin-top:12px">
+      <tr><th>inbound</th><th>handler reply</th></tr>
+      <tr>
+        <td class="mono">{{ sim.text }}</td>
+        <td class="mono" style="color:var(--green)">{{ sim.reply if sim.reply is not none else "no rule matched" }}</td>
+      </tr>
+    </table>
+  {% else %}
+    <p class="mono" style="color:var(--muted);margin-top:10px">Type a message and Dispatch — the reply comes from bot.handlers.handle, the same function the real webhook calls.</p>
+  {% endif %}
+</div>
+
+<div class="grid2">
+<div class="card">
+  <h2>Recent messages</h2>
+  {% if messages %}
+  <table>
+    <tr><th>id</th><th>dir</th><th>text</th></tr>
+    {% for m in messages %}
+    <tr><td class="mono">{{ m.id }}</td><td><span class="tag {{ 'g' if m.direction == 'out' else '' }}">{{ m.direction }}</span></td><td class="mono">{{ m.text }}</td></tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <div class="empty mono">no messages stored yet — POST /api/webhook with {"to":"alice","text":"hi"}</div>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2>Groups</h2>
+  {% for g in groups %}
+  <div class="row" style="border-bottom:1px solid #1a1e27;padding:8px 0">
+    <span class="mono">{{ g.wxid }}</span>
+    <span style="flex:1">{{ g.name }}</span>
+    <form method="post" action="{{ url_for('mute_group', group_id=g.wxid) }}" class="row">
+      <input name="member" placeholder="member" size="10">
+      <input name="minutes" value="60" size="4">
+      <button class="btn g" type="submit">Mute</button>
+    </form>
+  </div>
+  {% endfor %}
+  <h4 style="margin-top:14px">Muted ({{ muted_count }})</h4>
+  {% if muted %}{% for m in muted %}<span class="tag r">{{ m }}</span> {% endfor %}
+  {% else %}<span class="mono">nobody muted</span>{% endif %}
+</div>
+</div>
+
+<div class="card">
+  <h2>Rules <span class="tag">{{ enabled_count }} enabled / {{ rule_count }}</span></h2>
+  {% if rules %}
+  <table>
+    <tr><th>id</th><th>trigger</th><th>action</th><th>params</th><th>enabled</th><th></th></tr>
+    {% for r in rules %}
+    <tr>
+      <td class="mono">{{ r.id }}</td>
+      <td class="mono">{{ r.trigger }}</td>
+      <td>{{ r.action }}</td>
+      <td class="mono">{{ r.params_json }}</td>
+      <td>{% if r.enabled %}<span class="tag g">on</span>{% else %}<span class="tag y">off</span>{% endif %}</td>
+      <td class="row">
+        <form method="post" action="{{ url_for('toggle_rule', rid=r.id) }}"><button class="btn g" type="submit">toggle</button></form>
+        <form method="post" action="{{ url_for('delete_rule', rid=r.id) }}"><button class="btn r" type="submit">delete</button></form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <div class="empty mono">no rules yet — add one on the <a href="{{ url_for('rules') }}">rules</a> page</div>
+  {% endif %}
+</div>
+{% endblock %}
