@@ -68,6 +68,7 @@ Every route below is in [`openapi/wxbridge.yaml`](openapi/wxbridge.yaml) and is 
 | `POST` | `/api/webhook` | send message |
 | `GET` | `/api/messages` | list |
 | `GET` | `/api/rules` | list rules |
+| `POST` | `/api/rules` | add rule |
 | `POST` | `/api/groups/<id>/mute` | mute |
 
 ## Screenshots
@@ -101,7 +102,7 @@ These numbers were produced on this checkout by `pytest --cov` and by booting `w
 
 | Signal | Value |
 | --- | --- |
-| Tests | **25 / 25 passed** (2.5 s, exit 0) |
+| Tests | **25 / 25 passed** (1.9 s, exit 0) |
 | Line coverage | **69.0%** — 457 of 630 statements |
 | Source | 15 files / 1,448 lines |
 | Test code | 4 files / 238 lines |

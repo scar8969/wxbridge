@@ -21,7 +21,6 @@ paths:
       responses:
         "200":
           description: ok
-  /api/rules:
     get:
       summary: list rules
       responses:
