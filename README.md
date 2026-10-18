@@ -4,7 +4,7 @@
 
 <h1 align="center">wxbridge</h1>
 
-<p align="center"><b>A WeChat bot server: webhook in, rules out, groups under control.</b></p>
+<p align="center"><b>A WeChat bot server: send through a bridge, answer by rule.</b></p>
 
 <p align="center">
   <a href="#quality-gates"><img src="https://img.shields.io/badge/tests-25%20passed-2ea44f" alt="tests: 25 passed"></a> <a href="#quality-gates"><img src="https://img.shields.io/badge/coverage-69.0%-yellow" alt="coverage: 69.0%"></a> <a href="#api"><img src="https://img.shields.io/badge/routes-10%20answered-0969da" alt="routes: 10 answered"></a> <a href="#requirements"><img src="https://img.shields.io/badge/python-3.11%2B-3776ab" alt="python: 3.11+"></a> <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-2ea44f" alt="license: MIT"></a>
