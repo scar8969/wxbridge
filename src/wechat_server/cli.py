@@ -4,17 +4,22 @@ Every import past argparse is deferred into the command body, so `cli.py --help`
 works before Flask, SQLAlchemy or an itchat session exists on the machine -- --help
 must not need a database.
 """
+
 import argparse
+
 
 def cmd_send(args):
     from .bot.bridge import get_bridge
+
     ok = get_bridge().send(args.to, args.text)
     print("[wechat] sent to %s %s" % (args.to, "ok" if ok else "failed"))
     return 0 if ok else 1
 
+
 def cmd_rules(args):
     from ._app import app
     from .models import Rule
+
     with app.app_context():
         rows = Rule.query.order_by(Rule.id).all()
         if not rows:
@@ -25,10 +30,13 @@ def cmd_rules(args):
             print("[wechat] #%s %r -> %s %s" % (r.id, r.trigger, r.action, state))
     return 0
 
+
 def cmd_serve(args):
     from ._app import app
+
     app.run(host=args.host, port=args.port, debug=False)
     return 0
+
 
 def main(argv=None):
     p = argparse.ArgumentParser(prog="wechat", description="WeChat bot server CLI")

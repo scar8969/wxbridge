@@ -4,9 +4,11 @@ The real bridge needs a logged-in WeChat session and a network socket, neither o
 which exists in CI.  Every method here is local state, so the web app, the CLI and
 the tests all exercise the same object graph without one.
 """
+
 import threading
 
 __all__ = ["WechatBridge", "get_bridge"]
+
 
 class WechatBridge:
     """Mock itchat client: contacts, groups, mute set, send()."""
@@ -24,18 +26,18 @@ class WechatBridge:
         return True
 
     def get_contacts(self):
-        return [{"wxid": k, "name": v, "is_group": False}
-                for k, v in self.contacts.items()]
+        return [{"wxid": k, "name": v, "is_group": False} for k, v in self.contacts.items()]
 
     def get_groups(self):
-        return [{"wxid": k, "name": v, "is_group": True}
-                for k, v in self.groups.items()]
+        return [{"wxid": k, "name": v, "is_group": True} for k, v in self.groups.items()]
 
     def is_muted(self, member):
         return member in self.muted
 
+
 _bridge = None
 _lock = threading.Lock()
+
 
 def get_bridge():
     """Process-wide singleton.

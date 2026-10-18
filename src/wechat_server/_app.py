@@ -5,9 +5,11 @@ lives one level below the project root, so a bare `Flask(__name__)` would look i
 `web/templates/` and every page would 500 with TemplateNotFound.  The same applies
 to `instance_path`, which keeps the SQLite file out of the package directory.
 """
+
 import json
 import os
 import sys
+
 from . import paths
 
 if str(paths.PROJECT_ROOT) not in sys.path:
@@ -24,11 +26,14 @@ from .models import Contact, Message, Rule, db
 APP_NAME = "\U0001f4ac wechat-server"
 ACTIONS = ("reply", "api", "forward")
 
+
 def _rule_rows():
     return Rule.query.order_by(Rule.id.desc()).all()
 
+
 def _message_rows(limit=50):
     return Message.query.order_by(Message.id.desc()).limit(limit).all()
+
 
 def _page_context(**extra):
     """Context every page needs; `form` is always defined for the rule form.
@@ -52,11 +57,12 @@ def _page_context(**extra):
     ctx.update(extra)
     return ctx
 
+
 def build_app():
     """Build the application: configuration, database, then routes."""
-    app = Flask(__name__,
-                template_folder=str(paths.TEMPLATES_DIR),
-                instance_path=str(paths.INSTANCE_DIR))
+    app = Flask(
+        __name__, template_folder=str(paths.TEMPLATES_DIR), instance_path=str(paths.INSTANCE_DIR)
+    )
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + str(paths.INSTANCE_DIR / "wechat.db")
     db.init_app(app)
     with app.app_context():
@@ -66,13 +72,15 @@ def build_app():
 
     @app.get("/")
     def index():
-        return render_template("index.html",
-                               rules=_rule_rows(),
-                               messages=_message_rows(),
-                               contacts=Contact.query.order_by(Contact.id).all(),
-                               groups=get_bridge().get_groups(),
-                               muted=sorted(get_bridge().muted),
-                               **_page_context())
+        return render_template(
+            "index.html",
+            rules=_rule_rows(),
+            messages=_message_rows(),
+            contacts=Contact.query.order_by(Contact.id).all(),
+            groups=get_bridge().get_groups(),
+            muted=sorted(get_bridge().muted),
+            **_page_context(),
+        )
 
     @app.get("/rules")
     def rules():
@@ -80,19 +88,32 @@ def build_app():
 
     @app.post("/rules/new")
     def create_rule():
-        form = {"trigger": (request.form.get("trigger") or "").strip(),
-                "action": (request.form.get("action") or "reply").strip(),
-                "text": (request.form.get("text") or "").strip()}
+        form = {
+            "trigger": (request.form.get("trigger") or "").strip(),
+            "action": (request.form.get("action") or "reply").strip(),
+            "text": (request.form.get("text") or "").strip(),
+        }
         if not form["trigger"]:
-            return render_template("rules.html", rules=_rule_rows(),
-                                   error="trigger is required", form=form,
-                                   **_page_context()), 400
+            return render_template(
+                "rules.html",
+                rules=_rule_rows(),
+                error="trigger is required",
+                form=form,
+                **_page_context(),
+            ), 400
         if form["action"] not in ACTIONS:
-            return render_template("rules.html", rules=_rule_rows(),
-                                   error="unknown action: " + form["action"], form=form,
-                                   **_page_context()), 400
-        rule = Rule(trigger=form["trigger"], action=form["action"],
-                    params_json=json.dumps({"text": form["text"]} if form["text"] else {}))
+            return render_template(
+                "rules.html",
+                rules=_rule_rows(),
+                error="unknown action: " + form["action"],
+                form=form,
+                **_page_context(),
+            ), 400
+        rule = Rule(
+            trigger=form["trigger"],
+            action=form["action"],
+            params_json=json.dumps({"text": form["text"]} if form["text"] else {}),
+        )
         db.session.add(rule)
         db.session.commit()
         return redirect(url_for("rules"))
@@ -116,8 +137,11 @@ def build_app():
 
     @app.post("/groups/<group_id>/mute")
     def mute_group(group_id):
-        mute(group_id, (request.form.get("member") or "").strip(),
-             int(request.form.get("minutes") or 60))
+        mute(
+            group_id,
+            (request.form.get("member") or "").strip(),
+            int(request.form.get("minutes") or 60),
+        )
         return redirect(url_for("index"))
 
     @app.post("/simulate")
@@ -125,15 +149,17 @@ def build_app():
         """Run `bot.handlers.handle` against typed text, the same path as a real message."""
         form = {"text": (request.form.get("text") or "").strip()}
         reply = handle(form["text"]) if form["text"] else None
-        return render_template("index.html",
-                               rules=_rule_rows(),
-                               messages=_message_rows(),
-                               contacts=Contact.query.order_by(Contact.id).all(),
-                               groups=get_bridge().get_groups(),
-                               muted=sorted(get_bridge().muted),
-                               form=form,
-                               sim={"text": form["text"], "reply": reply},
-                               **_page_context())
+        return render_template(
+            "index.html",
+            rules=_rule_rows(),
+            messages=_message_rows(),
+            contacts=Contact.query.order_by(Contact.id).all(),
+            groups=get_bridge().get_groups(),
+            muted=sorted(get_bridge().muted),
+            form=form,
+            sim={"text": form["text"], "reply": reply},
+            **_page_context(),
+        )
 
     @app.get("/api/health")
     def api_health():
@@ -150,5 +176,6 @@ def build_app():
         app.run(host="0.0.0.0", port=int(os.environ.get("PORT", "8000")), debug=False)
 
     return app
+
 
 app = build_app()
