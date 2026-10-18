@@ -1,6 +1,6 @@
 # Architecture -- Wechat_server
 
-A6 wechat-server skeleton — WeChat bot server.
+A6 wechat-server service — WeChat bot server.
 
 This document explains how the service is put together, why the seams sit where
 they do, and what breaks first under load.
@@ -9,7 +9,7 @@ they do, and what breaks first under load.
 
 ## 1. Context
 
-a6_wechat_server is a single-process Flask service. It owns its own database (SQLite by
+wxbridge is a single-process Flask service. It owns its own database (SQLite by
 default, any SQLAlchemy-supported backend via `DATABASE_URL`) and is deployed
 behind a reverse proxy or an orchestrator.
 
@@ -74,7 +74,7 @@ flowchart TB
 | `templates/base.html` | asset |
 | `templates/index.html` | asset |
 | `templates/rules.html` | asset |
-| `tests/test_a6_wechat_server.py` | module |
+| `tests/test_wxbridge.py` | module |
 | `_app.py` | asset |
 
 ---
@@ -137,9 +137,9 @@ writable lives under `/app`.
 
 | Table | Owner |
 | --- | --- |
-| `contacts` | owned by `a6_wechat_server` |
-| `messages` | owned by `a6_wechat_server` |
-| `rules` | owned by `a6_wechat_server` |
+| `contacts` | owned by `wxbridge` |
+| `messages` | owned by `wxbridge` |
+| `rules` | owned by `wxbridge` |
 
 Tables are created by the application's own bootstrap on first use. No migration
 tool is wired in; the schema is additive, and the service tolerates a missing or

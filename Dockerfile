@@ -34,7 +34,7 @@ RUN groupadd --system --gid 1001 app \
 WORKDIR /app
 
 COPY --from=builder /wheels /wheels
-RUN python -m pip install --no-cache-dir --no-index --find-links=/wheels a6-wechat-server \
+RUN python -m pip install --no-cache-dir --no-index --find-links=/wheels wxbridge \
  && rm -rf /wheels \
  && mkdir -p /var/lib/wechat_server/instance /var/lib/wechat_server/log \
  && chown -R app:app /var/lib/wechat_server /app

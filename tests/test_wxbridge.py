@@ -1,4 +1,4 @@
-"""A6 wechat-server — tests. Run: pytest test_a6_wechat_server.py"""
+"""A6 wechat-server — tests. Run: pytest test_wxbridge.py"""
 import sys, os
 
 import pytest
