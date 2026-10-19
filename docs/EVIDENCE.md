@@ -4,7 +4,7 @@ Every line below was produced by a command run against this exact checkout, on t
 
 | | |
 | --- | --- |
-| Generated | 2026-10-19 02:56 |
+| Generated | 2026-10-19 09:39 |
 | Python | 3.14.7 |
 | Platform | Windows 11 |
 
@@ -15,7 +15,7 @@ python -m pytest -q
 ```
 
 - exit code **0**
-- 25 passed in 1.07s
+- 25 passed in 1.22s
 
 ## Static gates
 
@@ -36,6 +36,23 @@ The application was imported through `wsgi.py` and each GET path declared in `op
 | 200 | `/api/rules` | 13 | application/json |
 
 2 paths walked, 0 of them raised or answered 5xx.
+
+## CLI
+
+```
+usage: wechat [-h] {send,rules,serve} ...
+
+WeChat bot server CLI
+
+positional arguments:
+  {send,rules,serve}
+    send              send one message through the bridge
+    rules             list stored rules
+    serve             run the dev server
+
+options:
+  -h, --help          show this help message and exit
+```
 
 ## Screenshots
 
