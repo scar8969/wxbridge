@@ -1,6 +1,6 @@
-from datetime import datetime
-
 from flask_sqlalchemy import SQLAlchemy
+
+from .clock import utcnow
 
 db = SQLAlchemy()
 
@@ -11,7 +11,7 @@ class Contact(db.Model):
     wxid = db.Column(db.String(64), unique=True)
     name = db.Column(db.String(128), default="")
     is_group = db.Column(db.Integer, default=0)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=utcnow)
 
 
 class Message(db.Model):
@@ -20,7 +20,7 @@ class Message(db.Model):
     contact_id = db.Column(db.Integer, db.ForeignKey("contacts.id"))
     direction = db.Column(db.String(8), default="in")  # in|out
     text = db.Column(db.Text, default="")
-    at = db.Column(db.DateTime, default=datetime.utcnow)
+    at = db.Column(db.DateTime, default=utcnow)
 
 
 class Rule(db.Model):
